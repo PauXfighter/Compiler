@@ -1,0 +1,52 @@
+def main() {
+    // Programa principal
+    int x = 10-3;
+    bool y = true;
+    const char z = 'A';
+    str text = "Hello, World!";
+    int[] list = [1, 2, 3, 4, 5];
+    int[][] matrix = [[1, 2], [3, 4], [5, 6]];
+
+    if x > 5 {
+        print("x is greater than 5");
+        int s = readInt();
+    } else {
+        print("x is not greater than 5");
+        int s = readInt();
+    }
+
+    int s = 0;
+    while y==true || s == 40 {
+        print("Inside while loop");
+        s++;
+        if s >= 3 {
+            y = false;
+        } 
+    }
+    
+    if s == 3 {
+        s=3*5
+    }
+
+    for int j in list {
+        print("Element: ", j, " at index: ", j);
+    }
+
+    list[2] = 10;
+    matrix[1][1] = 20;
+}
+
+def int helper int a, int b {
+    // Función auxiliar
+    int a = 5;
+    int b = 10;
+    int sum = a + b;
+    sum++
+    sum+=b
+    if sum > 20 && sum < 30 {
+        print("Sum is greater than 20 and less than 30");
+    } else {
+        print("Sum is less than or equal to 20 or greater than or equal to 30");
+    }
+    return sum;
+}
