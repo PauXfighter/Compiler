@@ -241,13 +241,11 @@ Hem afegit les següents característiques opcionals del llenguatge, extretes de
 
 ## **Taula d’errors lèxics:**
 
-## 
-
 | Error | Patró | Missatge |
 | :---- | :---- | :---- |
-| Caràcter illegal  | . (qualsevol altre caracter, incloent & o \| aïllats, @, \#, \$) | Caràcter ilegal  |
-| Cadena sense tancar o amb escapament desconegut | “ \[^”\\r\\n\]\* “? | Cadena mal formada |
-| Literal de caràcter mal format | ‘ \[^’\\r\\n\]\* ‘? | Literal de caràcter mal format |
+| Caràcter illegal  | \[^\]  | Caràcter ilegal (qualsevol altre caracter, incloent & o \| aïllats, @, \#, \$) |
+| Cadena sense tancar o amb escapament desconegut | " \[^"\\r\\n\]\* "? | Cadena mal formada |
+| Literal de caràcter mal format | ' \[^'\\r\\n\]\* '? | Literal de caràcter mal format |
 | Enter fora de rang | digit+ amb valor superior a 2147483647 | Enter fora de rang |
 
 ## 
