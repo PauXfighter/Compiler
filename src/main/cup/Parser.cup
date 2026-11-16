@@ -1,0 +1,16 @@
+package compilador;
+
+terminal DEF, IF, ELSE, WHILE, FOR, IN, RETURN, CONST, INT, BOOL, CHAR, STR, TRUE, FALSE;
+terminal PRINT, PRINTLN, READINT, READBOOL, READCHAR, READSTR, LEN, APPEND;
+terminal String ID, STR_LIT;
+terminal Integer INT_LIT;
+terminal Character CHAR_LIT;
+terminal PLUS, MINUS, TIMES, DIV, MOD;
+terminal EQ, NEQ, LT, GT, LE, GE;
+terminal AND, OR, NOT;
+terminal ASSIGN, PLUSEQ, MINUSEQ, INC, DEC;
+terminal LPAREN, RPAREN, LBRACE, RBRACE, LBRACKET, RBRACKET, SEMI, COMMA, DOT;
+
+non terminal programa;
+
+programa ::= ;

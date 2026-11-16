@@ -1,0 +1,14 @@
+target/
+*.class
+
+# IDE & Editor files
+.idea/
+*.iml
+.vscode/
+.settings/
+.project/
+.classpath/
+
+# OS files
+Thumbs.db
+Desktop.ini
