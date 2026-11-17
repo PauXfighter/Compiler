@@ -26,3 +26,16 @@ Aquest document recull de manera breu les intervencions d'eines d'IA generativa 
   - Creació de les classes de suport per a la gestió centralitzada d'errors del compilador: `TipusError.java`, `ErrorCompilacio.java` i `GestorErrors.java` a `src/main/java/compilador/`.
 - **Abast de la intervenció de la IA:**
   - Estructuració del model d'errors segons l'enunciat (línia, columna, tipus d'error i missatge explicatiu) i suport a l'exportació en fitxer UTF-8. No interromp l'anàlisi per continuar la detecció.
+
+---
+
+## Sessió 3: Implementació guiada del Lexer i classe principal (Passos 3.2 i 3.3)
+- **Data:** 17/11/2026
+- **Tasca realitzada:**
+  - Anàlisi dels exemples docents (`lexic1.l`, `prova.flex`, `lexic2.l` i `calculadora.v1.0.zip`).
+  - Desenvolupament incremental i guiat de l'especificació lèxica `src/main/jflex/Lexer.flex` (subpassos 3.2.1 a 3.2.7): directrius `%cup`, `%unicode`, `%line`, `%column`, estats exclusius `%xstate` (`CADENA`, `CARACTER`), les 22 paraules reservades abans d'identificadors, els 28 operadors/delimitadors, control de desbordament d'enters (`INT_LIT` > 2147483647), decodificació de seqüències d'escapament i regla de caràcters il·legals.
+  - Guia en la creació de la classe principal executora `Compilador.java` (Pas 3.3) per rebre el fitxer d'entrada per argument, processar-lo en UTF-8 i generar els fitxers de sortida de tókens (`.tokens.txt`) i d'errors (`.errors.txt`).
+  - Preparació dels casos de prova per al Pas 3.4 (correcte amb `Example.txt` i tipificació d'errors a `ExampleErrors.txt`).
+- **Abast de la intervenció de la IA:**
+  - Suport consultiu i explicatiu: desglossament pas a pas de cada bloc de codi, resolució de dubtes teòrics (ús de `yybegin()`, estats exclusius i gestió de memòria amb `StringBuilder`), i diagnòstic de la sincronització de l'IDE amb `target/generated-sources/`.
+  - El codi ha estat escrit i integrat directament pels alumnes, assegurant la comprensió i justificació de cada decisió de disseny.
