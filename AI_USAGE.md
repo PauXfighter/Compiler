@@ -37,5 +37,5 @@ Aquest document recull de manera breu les intervencions d'eines d'IA generativa 
   - Guia en la creació de la classe principal executora `Compilador.java` (Pas 3.3) per rebre el fitxer d'entrada per argument, processar-lo en UTF-8 i generar els fitxers de sortida de tókens (`.tokens.txt`) i d'errors (`.errors.txt`).
   - Preparació dels casos de prova per al Pas 3.4 (correcte amb `Example.txt` i tipificació d'errors a `ExampleErrors.txt`).
 - **Abast de la intervenció de la IA:**
-  - Suport consultiu i explicatiu: desglossament pas a pas de cada bloc de codi, resolució de dubtes teòrics (ús de `yybegin()`, estats exclusius i gestió de memòria amb `StringBuilder`), i diagnòstic de la sincronització de l'IDE amb `target/generated-sources/`.
+  - Suport consultiu i explicatiu: resolució de dubtes teòrics (ús de `yybegin()`, estats exclusius i gestió de memòria amb `StringBuilder`), i diagnòstic de la sincronització de l'IDE amb `target/generated-sources/`.
   - El codi ha estat escrit i integrat directament pels alumnes, assegurant la comprensió i justificació de cada decisió de disseny.
