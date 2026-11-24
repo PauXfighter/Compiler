@@ -1,0 +1,3 @@
+[Línia 29, Columna 5] Error Sintàctic: Error sintàctic prop del símbol 'RBRACE'
+[Línia 39, Columna 16] Error Sintàctic: Error sintàctic prop del símbol 'INT'
+[Línia 45, Columna 5] Error Sintàctic: Error sintàctic prop del símbol 'ID' ('sum')

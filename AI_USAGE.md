@@ -39,3 +39,20 @@ Aquest document recull de manera breu les intervencions d'eines d'IA generativa 
 - **Abast de la intervenció de la IA:**
   - Suport consultiu i explicatiu: resolució de dubtes teòrics (ús de `yybegin()`, estats exclusius i gestió de memòria amb `StringBuilder`), i diagnòstic de la sincronització de l'IDE amb `target/generated-sources/`.
   - El codi ha estat escrit i integrat directament pels alumnes, assegurant la comprensió i justificació de cada decisió de disseny.
+
+---
+
+## Sessió 4: Desenvolupament de l'Anàlisi Sintàctic amb Java CUP (Passos 4.1 a 4.4)
+- **Data:** 24/11/2026
+- **Tasca realitzada:**
+  - Definició de la taula de precedències i associativitats d'operadors a `src/main/cup/Parser.cup` (Pas 4.1), resolent el conflicte del *dangling-else* i el menys unari amb el terminal fictici `UMINUS`.
+  - Resolució de l'error d'ordenació a CUP en què els símbols `non terminal` s'han de declarar estrictament abans de les seccions `precedence`.
+  - Disseny de l'estructura general del programa i dels subprogrames (Pas 4.2): procediments (`def nom(...)`), funcions (`def tipus nom(...)`), mètode principal `def main()`, paràmetres formals i sistema de tipus recursiu (`int`, `bool`, `char`, `str`, `tipus[]`, `tipus[][]`).
+  - Integració de la gestió d'errors sintàctics sobrecarregant `syntax_error` i `unrecovered_syntax_error` a la secció `parser code` per connectar amb `GestorErrors` sense interrompre l'anàlisi de forma no controlada.
+  - Implementació de les declaracions de variables (`int x;`, `int x = expr;`), constants amb inicialitzador obligatori (`const char z = 'A';`) i suport recursiu per a llistes i matrius literals (`[]`, `[1, 2]`, `[[1, 2], [3, 4]]`) juntament amb la jerarquia bàsica d'expressions (Pas 4.3).
+  - Implementació de les sentències i estructures de control (Pas 4.4): assignacions simples i compostes (`=`, `+=`, `-=`), pre/post-increments i decrements (`++`, `--`), estructures condicionals (`if-else` amb resolució de dangling-else via `%prec IF`), bucles (`while`, `for-in`), crides a subprogrames, operacions `append` de llistes, instruccions d'E/S (`print`, `println`) i sentències de retorn (`return;`, `return expr;`).
+  - Completitud de la jerarquia d'expressions (Pas 4.5): accés indexat a elements de llistes i matrius (`llista[i]`, `matriu[i][j]`) i mètode de longitud (`llista.len()`, `matriu[0].len()`).
+- **Abast de la intervenció de la IA:**
+  - Suport en el disseny formal de la gramàtica lliure de context LALR(1) a CUP, assegurant zero conflictes shift/reduce i reduce/reduce.
+  - Explicació teòrica detallada del funcionament de `parser code`, del pas de paràmetres al constructor i de la captura d'errors per coordenades de línia i columna.
+  - El codi ha estat integrat directament pels alumnes a partir de les propostes i explicacions guiades.

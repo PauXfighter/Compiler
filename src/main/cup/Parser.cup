@@ -1,5 +1,56 @@
 package compilador;
 
+import java_cup.runtime.Symbol;
+
+parser code {:
+    private GestorErrors gestorErrors;
+
+    // Constructor sobrecarregat per rebre el gestor d'errors centralitzat
+    public parser(java_cup.runtime.Scanner s, GestorErrors gestorErrors) {
+        super(s);
+        this.gestorErrors = gestorErrors;
+    }
+
+    @Override
+    // Aquest mètode s'invoca quan es detecta un error sintàctic recuperable
+    public void syntax_error(Symbol cur_token) {
+        int linia = cur_token.left;
+        int columna = cur_token.right;
+        // Obtenim el nom del terminal a partir del seu símbol
+        // Si el símbol és vàlid, obtenim el nom del terminal
+        // si no, utilitzem el valor del símbol com a nom
+        String nomToken = (cur_token.sym >= 0 && cur_token.sym < sym.terminalNames.length) 
+                ? sym.terminalNames[cur_token.sym] 
+                : String.valueOf(cur_token.sym);
+        String missatge = "Error sintàctic prop del símbol '" + nomToken + "'";
+        if (cur_token.value != null) {
+            missatge += " ('" + cur_token.value + "')";
+        }
+
+        if (gestorErrors != null) {
+            gestorErrors.afegirErrorSintactic(linia, columna, missatge);
+        } else {
+            System.err.println("Error sintàctic [Línia: " + linia + ", Columna: " + columna + "]: " + missatge);
+        }
+    }
+
+    @Override
+    // Aquest mètode s'invoca quan es detecta un error sintàctic irrecuperable
+    public void unrecovered_syntax_error(Symbol cur_token) throws Exception {
+        int linia = cur_token.left;
+        int columna = cur_token.right;
+        String missatge = "Error sintàctic irrecuperable. S'ha aturat l'anàlisi.";
+        if (gestorErrors != null) {
+            gestorErrors.afegirErrorSintactic(linia, columna, missatge);
+        } else {
+            System.err.println("Error sintàctic irrecuperable [Línia: " + linia + ", Columna: " + columna + "]");
+        }
+        // Llançar una excepció per indicar que l'anàlisi ha fallat
+        done_parsing();
+    }
+:}
+
+// --- Declaració de terminals ---
 terminal DEF, IF, ELSE, WHILE, FOR, IN, RETURN, CONST, INT, BOOL, CHAR, STR, TRUE, FALSE;
 terminal PRINT, PRINTLN, READINT, READBOOL, READCHAR, READSTR, LEN, APPEND;
 terminal String ID, STR_LIT;
@@ -11,6 +62,215 @@ terminal AND, OR, NOT;
 terminal ASSIGN, PLUSEQ, MINUSEQ, INC, DEC;
 terminal LPAREN, RPAREN, LBRACE, RBRACE, LBRACKET, RBRACKET, SEMI, COMMA, DOT;
 
-non terminal programa;
+// Terminal fictici per al menys unari (-expr)
+terminal UMINUS;
 
-programa ::= ;
+// --- Símbols no terminals (sempre declarats ABANS de les precedències) ---
+non terminal programa;
+non terminal llista_subprogrames, subprograma;
+non terminal procediment, funcio;
+non terminal tipus, tipus_base;
+non terminal parametres_opc, llista_parametres, parametre;
+non terminal bloc, llista_sentencies, sentencia;
+non terminal declaracio, declaracio_var, declaracio_const;
+non terminal assignacio, target_assignacio, increment_decrement;
+non terminal condicional, bucle, crida_sentencia, retorn;
+non terminal expressio, literal, literal_llista, elements_llista;
+non terminal arguments_opc, llista_arguments;
+
+// --- Precedències i associativitats (de MENOR a MAJOR prioritat) ---
+// Resolució del dangling-else: ELSE té més prioritat que el tancament d'IF simple
+precedence nonassoc IF;
+precedence nonassoc ELSE;
+
+// Nivell 1: Disjunció lògica (associativa per l'esquerra)
+precedence left OR;
+
+// Nivell 2: Conjunció lògica (associativa per l'esquerra)
+precedence left AND;
+
+// Nivell 3: Igualtat i desigualtat (no associatius)
+precedence nonassoc EQ, NEQ;
+
+// Nivell 4: Operadors relacionals (no associatius)
+precedence nonassoc LT, GT, LE, GE;
+
+// Nivell 5: Suma i resta binàries (associatives per l'esquerra)
+precedence left PLUS, MINUS;
+
+// Nivell 6: Multiplicació, divisió i mòdul (associatius per l'esquerra)
+precedence left TIMES, DIV, MOD;
+
+// Nivell 7: Operadors unaris (negació lògica i menys unari, associatius per la dreta)
+precedence right NOT, UMINUS;
+
+// --- Símbol inicial ---
+start with programa;
+
+// --- Regles de producció ---
+// Estructura general del programa
+programa ::= llista_subprogrames
+           ;
+
+llista_subprogrames ::= llista_subprogrames subprograma
+                        | subprograma
+                        ;
+
+subprograma ::= procediment
+              | funcio
+              | error bloc
+              ;
+
+// Procediments (sense tipus de retorn, com def main() o def nom(...))
+procediment ::= DEF ID LPAREN parametres_opc RPAREN bloc
+              ;
+
+// Funcions (amb tipus de retorn explícit, com def int suma(...))
+funcio ::= DEF tipus ID LPAREN parametres_opc RPAREN bloc
+         ;
+
+// primitius, llistes (tipus[]) i matrius (tipus[][])
+tipus ::= tipus_base
+        | tipus LBRACKET RBRACKET
+        ;
+
+tipus_base ::= INT
+             | BOOL
+             | CHAR
+             | STR
+             ;
+
+// Paràmetres formals d'un subprograma
+parametres_opc ::= llista_parametres
+                 | /* buit: sense paràmetres */
+                 ;
+
+llista_parametres ::= llista_parametres COMMA parametre
+                    | parametre
+                    ;
+
+parametre ::= tipus ID
+            ;
+
+// Arguments de crides a funcions dins d'expressions
+arguments_opc ::= llista_arguments
+                | /* buit */
+                ;
+llista_arguments ::= llista_arguments COMMA expressio
+                   | expressio
+                   ;
+
+// Blocs de codi
+bloc ::= LBRACE llista_sentencies RBRACE
+        ;
+
+// Llista de sentències dins d'un bloc
+llista_sentencies ::= llista_sentencies sentencia
+                    | /* buit */
+                    ;
+
+sentencia ::= declaracio
+            | assignacio
+            | increment_decrement
+            | condicional
+            | bucle
+            | crida_sentencia
+            | retorn
+            | error SEMI
+            ;
+
+// Declaracions de variables i constants
+declaracio ::= declaracio_var
+             | declaracio_const
+             ;
+// Variables: sense inicialitzar o inicialitzada
+declaracio_var ::= tipus ID SEMI
+                 | tipus ID ASSIGN expressio SEMI
+                 ;
+
+// Constants, inicialitzades obligatòriament
+declaracio_const ::= CONST tipus ID ASSIGN expressio SEMI
+                   ;
+
+// Permet que una ssginació pugui ser simple o a una llista de 1 fins a N dimensions
+// exemples d'ús: x=10; llista[1]=0; matriu[1][2]=10; taula[1][2]...[n]=20;
+target_assignacio ::= ID
+                    | target_assignacio LBRACKET expressio RBRACKET
+                    ;
+
+assignacio ::= target_assignacio ASSIGN expressio SEMI  //  =
+             | target_assignacio PLUSEQ expressio SEMI  // +=
+             | target_assignacio MINUSEQ expressio SEMI // -= 
+             ;
+
+increment_decrement ::= target_assignacio INC SEMI    // i++;
+                      | target_assignacio DEC SEMI    // i--;
+                      | INC target_assignacio SEMI    // ++i;
+                      | DEC target_assignacio SEMI    // --i;
+                      ;
+
+// Estructures de control de flux (if-else, while, for-in)
+condicional ::= IF expressio bloc %prec IF // Per poder assignar cada else al If més proper
+              | IF expressio bloc ELSE bloc
+              ;
+
+bucle ::= WHILE expressio bloc
+        | FOR tipus ID IN expressio bloc
+        ;
+
+// Crides a subprogrames, mètodes de llistes i E/S com a sentències
+crida_sentencia ::= ID LPAREN arguments_opc RPAREN SEMI
+                  | target_assignacio DOT APPEND LPAREN expressio RPAREN SEMI
+                  | PRINT LPAREN arguments_opc RPAREN SEMI
+                  | PRINTLN LPAREN arguments_opc RPAREN SEMI
+                  ;
+
+// Sentència de retorn
+retorn ::= RETURN SEMI
+         | RETURN expressio SEMI
+         ;
+
+// Literals bàsics
+literal ::= INT_LIT
+          | CHAR_LIT
+          | STR_LIT
+          | TRUE
+          | FALSE
+          ;
+// Literals de llistes i matrius: buit [] o amb elements [1, 2, 3], [[1, 2], [3, 4]]
+literal_llista ::= LBRACKET RBRACKET
+                 | LBRACKET elements_llista RBRACKET
+                 ;
+
+elements_llista ::= elements_llista COMMA expressio
+                  | expressio
+                  ;
+
+// Expressions
+expressio ::= literal
+            | literal_llista
+            | target_assignacio
+            | target_assignacio DOT LEN LPAREN RPAREN
+            | expressio PLUS expressio
+            | expressio MINUS expressio
+            | expressio TIMES expressio
+            | expressio DIV expressio
+            | expressio MOD expressio
+            | expressio EQ expressio
+            | expressio NEQ expressio
+            | expressio LT expressio
+            | expressio GT expressio
+            | expressio LE expressio
+            | expressio GE expressio
+            | expressio AND expressio
+            | expressio OR expressio
+            | NOT expressio
+            | MINUS expressio %prec UMINUS
+            | LPAREN expressio RPAREN
+            | ID LPAREN arguments_opc RPAREN
+            | READINT LPAREN RPAREN
+            | READBOOL LPAREN RPAREN
+            | READCHAR LPAREN RPAREN
+            | READSTR LPAREN RPAREN
+            ;
+
