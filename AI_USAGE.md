@@ -42,8 +42,8 @@ Aquest document recull de manera breu les intervencions d'eines d'IA generativa 
 
 ---
 
-## Sessió 4: Desenvolupament de l'Anàlisi Sintàctic amb Java CUP (Passos 4.1 a 4.4)
-- **Data:** 24/11/2026
+## Sessió 4: Desenvolupament de l'Anàlisi Sintàctic amb Java CUP (Passos 4.1 a 4.6)
+- **Data:** 24/11/2026 - 25/11/2026
 - **Tasca realitzada:**
   - Definició de la taula de precedències i associativitats d'operadors a `src/main/cup/Parser.cup` (Pas 4.1), resolent el conflicte del *dangling-else* i el menys unari amb el terminal fictici `UMINUS`.
   - Resolució de l'error d'ordenació a CUP en què els símbols `non terminal` s'han de declarar estrictament abans de les seccions `precedence`.
@@ -52,7 +52,10 @@ Aquest document recull de manera breu les intervencions d'eines d'IA generativa 
   - Implementació de les declaracions de variables (`int x;`, `int x = expr;`), constants amb inicialitzador obligatori (`const char z = 'A';`) i suport recursiu per a llistes i matrius literals (`[]`, `[1, 2]`, `[[1, 2], [3, 4]]`) juntament amb la jerarquia bàsica d'expressions (Pas 4.3).
   - Implementació de les sentències i estructures de control (Pas 4.4): assignacions simples i compostes (`=`, `+=`, `-=`), pre/post-increments i decrements (`++`, `--`), estructures condicionals (`if-else` amb resolució de dangling-else via `%prec IF`), bucles (`while`, `for-in`), crides a subprogrames, operacions `append` de llistes, instruccions d'E/S (`print`, `println`) i sentències de retorn (`return;`, `return expr;`).
   - Completitud de la jerarquia d'expressions (Pas 4.5): accés indexat a elements de llistes i matrius (`llista[i]`, `matriu[i][j]`) i mètode de longitud (`llista.len()`, `matriu[0].len()`).
+  - Connexió del `parser` dins `Compilador.java` (Pas 4.6) en dues passades coordinades (lèxica i sintàctica) sense duplicar errors lèxics, i incorporació de regles de recuperació d'errors sintàctics (`error bloc` a `subprograma` i `error SEMI` a `sentencia`) mantenint 0 conflictes LALR(1).
+  - Validació satisfactòria tant amb casos amb múltiples errors sintàctics (`Example.txt`) com amb el programa complet de referència del document de disseny (0 errors lèxics i 0 errors sintàctics).
 - **Abast de la intervenció de la IA:**
   - Suport en el disseny formal de la gramàtica lliure de context LALR(1) a CUP, assegurant zero conflictes shift/reduce i reduce/reduce.
-  - Explicació teòrica detallada del funcionament de `parser code`, del pas de paràmetres al constructor i de la captura d'errors per coordenades de línia i columna.
-  - El codi ha estat integrat directament pels alumnes a partir de les propostes i explicacions guiades.
+  - Explicació teòrica detallada del funcionament de `parser code`, del pas de paràmetres al constructor, de la recuperació d'errors en CUP i de la captura d'errors per coordenades de línia i columna.
+  - Diagnòstic del conflicte de versions de Java en execució (`UnsupportedClassVersionError` entre Java 8 i JDK 25).
+  - El codi ha estat integrat i validat directament pels alumnes a partir de les propostes i explicacions guiades.
